@@ -1,0 +1,61 @@
+{
+  "disallowEmptyBlocks": true,
+  //Запрет пустых блоков
+  "disallowKeywordsOnNewLine": [
+    "else"
+  ],
+  //Запрещает перенос на новую строку
+  "disallowMixedSpacesAndTabs": true,
+  // Не можен содержать одновременно и линии и табы
+  "disallowMultipleLineBreaks": true,
+  //Запрещает более двух пустых строк
+  "disallowMultipleLineStrings": true,
+  //Перенос без конкотинации запрещен
+  "disallowMultipleSpaces": true,
+  "disallowNewlineBeforeBlockStatements": true,
+  //запрещает перевод строки {
+  "disallowOperatorBeforeLineBreak": [
+    "+",
+    "."
+  ],
+  //обязательный перенос операторов
+  "disallowQuotedKeysInObjects": true,
+  //запрещает цитировать ключи объекта
+  "disallowSpaceBeforePostfixUnaryOperators": [
+    "++",
+    "--"
+  ],
+  "maximumLineLength": 122,
+  "requireBlocksOnNewline": true,
+  "requireCamelCaseOrUpperCaseIdentifiers": true,
+  "requireCapitalizedConstructors": true,
+  "requireCommaBeforeLineBreak": true,
+  "requireDotNotation": true,
+  "requireLineBreakAfterVariableAssignment": true,
+  "requireMultipleVarDecl": true,
+  "requirePaddingNewLinesAfterUseStrict": true,
+  "requireSpaceAfterBinaryOperators": [
+    "=",
+    ",",
+    "+",
+    "-",
+    "/",
+    "*",
+    "==",
+    "===",
+    "!=",
+    "!=="
+  ],
+  "requireSpaceBeforeBlockStatements": 1,
+  "requireSpaceBetweenArguments": true,
+  "requireSpacesInConditionalExpression": true,
+  "requireSpacesInForStatement": true,
+  "safeContextKeyword": [
+    "self",
+    "instance"
+  ],
+  "validateQuoteMarks": {
+    "mark": "'",
+    "escape": true
+  }
+}

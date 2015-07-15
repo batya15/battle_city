@@ -1,0 +1,26 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Web Tests</title>
+    <link rel="stylesheet" href="/vendor/css/qunit.css">
+    <script src="/vendor/js/qunit.js"></script>
+    <script src="/vendor/js/require.js"></script>
+    <script src="/require-config.js"></script>
+</head>
+<body>
+<h1 id="qunit-header">Qunit test battle city</h1>
+<h2 id="qunit-banner"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
+<div id="qunit-fixture"></div>
+<script>
+    QUnit.config.autostart = false;
+    QUnit.config.reorder = false;
+    QUnit.config.testTimeout = 2000;
+    require(['tests/canvas.class'], function () {
+        QUnit.start();
+    });
+</script>
+</body>
+</html>
