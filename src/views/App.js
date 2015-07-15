@@ -1,5 +1,6 @@
 define(['backbone', './app.jade', 'views/panel/Panel', 'views/SingleToneView/SingleToneView'],
     function(Backbone, template) {
+    'use strict';
 
     var Panel = require('views/panel/Panel'),
         SingleTone = require('views/SingleToneView/SingleToneView');
