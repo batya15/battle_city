@@ -1,8 +1,8 @@
-define(['backbone', './app.jade', 'views/panel/Panel', 'views/SingleToneView/SingleToneView'],
+define(['backbone', './app.jade', 'views/battle/canvas.class', 'views/SingleToneView/SingleToneView'],
     function(Backbone, template) {
     'use strict';
 
-    var Panel = require('views/panel/Panel'),
+    var Canvas = require('views/battle/canvas.class'),
         SingleTone = require('views/SingleToneView/SingleToneView');
 
     return Backbone.View.extend({
@@ -16,11 +16,11 @@ define(['backbone', './app.jade', 'views/panel/Panel', 'views/SingleToneView/Sin
         },
         render: function() {
             this.$el.html(template());
+            this.addView();
         },
         addView: function () {
-            var v = new Panel();
-            this.$('.main').append(v.$el);
-            v.render();
+            var canvas = new Canvas();
+            this.$('.main').append(canvas.el);
         },
         addSingle: function () {
             var v = new SingleTone();
