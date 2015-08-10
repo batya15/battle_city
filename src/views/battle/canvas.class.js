@@ -1,4 +1,4 @@
-define(['underscore', 'jquery'], function (_, $) {
+define(['underscore', 'jquery', './tank', 'model/tank'], function (_, $, Tank, model) {
     'use strict';
 
     var instance,
@@ -8,26 +8,32 @@ define(['underscore', 'jquery'], function (_, $) {
             width: 800,
             height: 608
         };
-
-    var x = 0, y = 0;
+    var MOVE = {
+        37: 1,
+        38: 2,
+        39: 4,
+        40: 8
+    };
 
     $(document).on('keydown', function (e) {
-        if (e.keyCode == 38 && graph[y-1] && graph[y-1][x]) {
-            y -= 1
+        var code = MOVE[e.keyCode];
+
+        if (code) {
+                model.move = model.move | code;
+                model.rotation = code;
         }
-        if (e.keyCode == 40 && graph[y+1] && graph[y+1][x]) {
-            y += 1
-        }
-        if (e.keyCode == 39&& graph[y][x+1]) {
-            x += 1
-        }
-        if (e.keyCode == 37&& graph[y][x-1]) {
-            x -= 1
+    });
+
+    $(document).on('keyup', function (e) {
+        var code = MOVE[e.keyCode];
+
+        if (code) {
+            model.move = model.move ^ code;
         }
     });
 
     var map = [
-        [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 1, 1, 4, 4, 4, 4, 0, 0, 2, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 1, 1, 4, 4, 4, 4, 0, 0, 0, 0, 0, 1, 1, 4, 4, 4, 4, 0, 0, 2, 2, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -65,14 +71,11 @@ define(['underscore', 'jquery'], function (_, $) {
     map.forEach(function (line, y) {
         graph[y] = []
         line.forEach(function (val, x) {
-            graph[y][x] = !(map[y][x] || (map[y+1] && (map[y+1][x] || map[y][x+1] || map[y+1][x+1])))
+            graph[y][x] = (map[y][x] || (map[y+1] && (map[y+1][x] || map[y][x+1] || map[y+1][x+1])))
         });
     });
 
-    var imgForest = new Image();
-    imgForest.src = '/tank.png';
-    var imgForest2 = new Image();
-    imgForest2.src = '/tank2.png';
+    var tank = new Tank(graph);
     var o = new Image();
     o.src = '/oriol.png';
     var o2 = new Image();
@@ -97,28 +100,48 @@ define(['underscore', 'jquery'], function (_, $) {
         this.el.height = OPTIONS.height;
         ctx = this.el.getContext('2d');
         ctx.imageSmoothingEnabled = false;
-        this._render();
+        this._render(0);
     };
 
 
     var radius = 150;
     var f = 0;
     var t = 0;
-    var s = Date.now(); //Вычислим угол
-
+    var lastTime = 0;
     Canvas.prototype = {
         constructor: Canvas,
-        _render: function () {
+        _render: function (dt) {
+            var delta =  dt - lastTime;
+            lastTime = dt;
+
             if (!instance) {
                 return false;
             }
 
-            f += (Date.now() - s) / 500;
-            t += (Date.now() - s) / 20;
+            f += (delta) / 500;
+            t += (delta) / 20;
 
             this._clearScene();
+            var tankO = tank.getTanks(delta);
 
-            ctx.drawImage(imgForest, x * 16, y * 16, 32, 32);
+            var shiftX = 0, shiftY = 0;
+
+            if (model.rotation === 4) {
+                shiftX = model.shift * 16;
+            }
+            if (model.rotation === 1) {
+                shiftX = - model.shift * 16
+            }
+            if (model.rotation === 8) {
+                shiftY =  model.shift * 16
+            }
+            if (model.rotation === 2) {
+                shiftY = - model.shift * 16
+            }
+
+            ctx.drawImage(tankO.canvas, model.x * 16 + shiftX, model.y * 16 + shiftY, 32, 32);
+
+            //ctx.drawImage(tankImg, 1 * 16, 1 * 16, 32, 32);
             //ctx.drawImage((Math.sin(t)<0)? o: o2, 192, 192+ radius * Math.cos(f), 32, 32);
 
             map.forEach(function (line, y) {
@@ -128,9 +151,17 @@ define(['underscore', 'jquery'], function (_, $) {
                     }
                 });
             });
+            ctx.fillStyle = 'red';
+            graph.forEach(function (line, y) {
+                line.forEach(function (val, x) {
+                    if (val) {
+                        ctx.fillRect(x*16+16, y*16+16, 5, 5)
+                    }
+                });
+            });
 
-            s = Date.now();
-            requestAnimationFrame(this._render.bind(this));
+
+            requestAnimationFrame(this._render.bind(this), this.el);
         },
         _clearScene: function () {
             //ctx.clearRect(0, 0, this.el.width, this.el.height);
