@@ -155,11 +155,11 @@ define(['underscore', 'jquery', './tank', 'model/tank'], function (_, $, Tank, m
             graph.forEach(function (line, y) {
                 line.forEach(function (val, x) {
                     if (val) {
-                        ctx.fillRect(x*16+16, y*16+16, 5, 5)
+                        ctx.fillRect(x*16+14, y*16+14, 4, 4)
                     }
                 });
             });
-
+            ctx.fillRect(model.x*16+14, model.y*16+14, 4, 4)
 
             requestAnimationFrame(this._render.bind(this), this.el);
         },

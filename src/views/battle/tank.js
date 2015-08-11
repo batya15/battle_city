@@ -1,7 +1,7 @@
 define(['underscore', 'jquery', 'model/tank'], function (_, $, model) {
     'use strict';
 
-    var SPEED = 1/100;
+    var SPEED = 1/300;
 
     var texture = {
         1: new Image(),
@@ -34,21 +34,23 @@ define(['underscore', 'jquery', 'model/tank'], function (_, $, model) {
             }
 
             if (model.move) {
-                if (model.rotation === 8 && this.graph[model.y+1] && this.graph[model.y+1][model.x]) {
-                    console.log('bottom')
-                } else if (model.rotation === 2 && this.graph[model.y-1] && this.graph[model.y-1][model.x]) {
+                model.shift = model.shift + SPEED * dt;
+                if (model.rotation === 8 && this.graph[model.y+1] && this.graph[model.y+1][model.x] && model.shift > 0) {
+                    model.shift = 0
+                } else if (model.rotation === 2 && this.graph[model.y-1] && this.graph[model.y-1][model.x] && model.shift > 0) {
+                    model.shift = 0
                     console.log('top')
-                } else if (model.rotation === 4 && this.graph[model.y][model.x+1]) {
+                } else if (model.rotation === 4 && this.graph[model.y][model.x+1] && model.shift > 0) {
+                    model.shift = 0
                     console.log('left')
-                } else if (model.rotation === 1 && this.graph[model.y][model.x-1]) {
+                } else if (model.rotation === 1 && this.graph[model.y][model.x-1] && model.shift > 0) {
+                    model.shift = 0
                     console.log('right')
-                } else {
-                    model.shift = model.shift + SPEED * dt;
                 }
             }
 
 
-            if (model.shift >= 1) {
+            if (model.shift >= 0.6) {
                 model.shift = model.shift - 1;
                 if (model.rotation === 1) {
                     model.x--;
